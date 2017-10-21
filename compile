@@ -1,0 +1,7 @@
+#!/bin/bash
+mkdir -p out/gui
+cp src/gui/style.css out/gui
+/home/jdk1.8.0_144/bin/javac -cp "lib/jade.jar" src/**/*.java -d out
+#/home/jdk1.8.0_144/bin/java -cp "lib/jade.jar:out" gui.psi8GUI
+/home/jdk1.8.0_144/bin/java -cp "lib/jade.jar:out" jade.Boot -gui -agents "Main:agents.psi8MainAgent;Fixed:agents.psi8FixedAgent;Fixed2:agents.psi8FixedAgent"
+#/home/jdk1.8.0_144/bin/java -cp "lib/jade.jar:out" agents.Prueba

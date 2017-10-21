@@ -1,0 +1,38 @@
+.text-area {
+    -fx-font-family: Consolas;
+    -fx-font-size: 15;
+    -fx-text-fill: #ffffff;
+    -fx-display-caret:true;
+    -fx-focus-color: #000000;
+}
+
+.content {
+    -fx-background-color: #000000;
+}
+
+.hbox{
+    -fx-alignment: center;
+    -fx-padding: 50 10 50 10;
+    -fx-font-size: 40;
+    -fx-font-weight:bold;
+}
+.margin-left{
+    -fx-padding: 0 0 0 50;
+}
+.margin-right{
+    -fx-padding: 0 20 0 0;
+}
+
+.vbox{
+ -fx-spacing: 5;
+ -fx-padding: 10 0 0 0;
+ -fx-alignment: center;   
+}
+.bold{
+    -fx-font-weight:bold;
+}
+.hbox-tables{
+    -fx-alignment: center;
+    -fx-padding: 25 10 50 10;
+    -fx-spacing: 40;
+}
