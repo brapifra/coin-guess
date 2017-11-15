@@ -163,7 +163,8 @@ public class psi8MainAgent extends Agent {
   }
 
   private void sendResult() {
-    String content = "Result#" + winner.getId() + "#";
+    String content = "Result#" + (this.winner != null ? winner.getId() : "") + "#"
+        + (this.winner != null ? this.totalCoins : "") + "#";
     String bets = "";
     String coins = "";
     for (psi8Player p : players.values()) {

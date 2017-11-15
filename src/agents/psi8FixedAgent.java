@@ -60,7 +60,7 @@ public class psi8FixedAgent extends Agent {
           id = Integer.parseInt(content[1]);
           break;
         case "Result":
-          System.out.println("Result");
+          System.out.println(msg.getContent());
           break;
         default:
           System.out.println(msg.getContent());
@@ -90,6 +90,7 @@ public class psi8FixedAgent extends Agent {
           sendReply(msg.createReply(), "MyCoins#3");
           break;
         case "GuessCoins":
+        //No se puede repetir
           sendReply(msg.createReply(), "MyBet#3");
           break;
         default:
