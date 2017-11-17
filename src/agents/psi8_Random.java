@@ -7,11 +7,12 @@ import jade.lang.acl.MessageTemplate;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
 import jade.domain.DFService;
+import java.util.concurrent.ThreadLocalRandom;
 
 import java.awt.List;
 import java.util.*;
 
-public class psi8_Fixed extends Agent {
+public class psi8_Random extends Agent {
   private int id;
   private int position;
   private LinkedHashMap<Integer, psi8_Player> players = new LinkedHashMap<Integer, psi8_Player>();
@@ -131,6 +132,6 @@ public class psi8_Fixed extends Agent {
   }
 
   private int myCoins() {
-    return 3;
+    return ThreadLocalRandom.current().nextInt(0, 3 + 1);
   }
 }
