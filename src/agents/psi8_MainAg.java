@@ -241,7 +241,6 @@ public class psi8_MainAg extends Agent {
           + " *************\n");
       winner.setVictories(winner.getVictories() + 1);
       playersPlaying.remove(winner.getName());
-      gui.setPlayersLeft(playersPlaying.size());
     } else {
       gui.log("************* No partial winner :( *************\n");
     }

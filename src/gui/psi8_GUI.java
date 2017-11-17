@@ -57,7 +57,7 @@ public class psi8_GUI extends Application {
         root = new VBox();
         root.getChildren().addAll(buildMenu(), buildNumbers(), buildTable(), buildConsole());
         root.setVgrow(console, Priority.ALWAYS);
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 1000, 800);
         scene.getStylesheets().add(this.getClass().getResource("psi8_style.css").toExternalForm());
         primaryStage.setTitle("Psi 8!");
         primaryStage.setScene(scene);
@@ -119,19 +119,19 @@ public class psi8_GUI extends Application {
     private HBox buildNumbers() {
         HBox hbox = new HBox();
         hbox.getStyleClass().add("hbox");
-        Label leftPLabel = new Label("0");
-        leftPLabel.textProperty().bind(playersLeft.asString());
+
         Label playersLabel = new Label("0");
         playersLabel.textProperty().bind(totalPlayers.asString());
-        playersLabel.getStyleClass().add("margin-right");
+
         Label leftGLabel = new Label("0");
         leftGLabel.textProperty().bind(gamesPlayed.asString());
         leftGLabel.getStyleClass().add("margin-left");
+
         Label gamesLabel = new Label("0");
-        gamesLabel.getStyleClass().add("margin-right");
         gamesLabel.textProperty().bind(totalGames.asString());
-        hbox.getChildren().addAll(leftPLabel, new Label(" of "), playersLabel, new Label("players"), leftGLabel,
-                new Label(" of "), gamesLabel, new Label("games"));
+
+        hbox.getChildren().addAll(playersLabel, new Label(" players"), leftGLabel, new Label(" of "), gamesLabel,
+                new Label(" games"));
         return hbox;
     }
 
@@ -220,12 +220,6 @@ public class psi8_GUI extends Application {
         Platform.runLater(() -> {
             playersLeft.set(players.size());
             gamesPlayed.set(i);
-        });
-    }
-
-    public void setPlayersLeft(int i) {
-        Platform.runLater(() -> {
-            playersLeft.set(i);
         });
     }
 }
