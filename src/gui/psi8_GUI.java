@@ -34,7 +34,6 @@ public class psi8_GUI extends Application {
     protected static SimpleIntegerProperty totalGames = new SimpleIntegerProperty(0);
     protected static SimpleIntegerProperty gamesPlayed = new SimpleIntegerProperty(0);
     protected static SimpleIntegerProperty totalPlayers = new SimpleIntegerProperty(0);
-    protected static SimpleIntegerProperty playersLeft = new SimpleIntegerProperty(0);
     protected static ObservableList<psi8_Player> players = FXCollections.observableArrayList();
     private VBox root;
     private static ListView<String> console;
