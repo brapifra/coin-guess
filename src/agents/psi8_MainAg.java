@@ -11,20 +11,20 @@ import jade.domain.DFService;
 import javafx.stage.Stage;
 import java.util.*;
 
-import agents.psi8Player;
-import gui.psi8GUI;
+import agents.psi8_Player;
+import gui.psi8_GUI;
 
-public class psi8MainAgent extends Agent {
-  private psi8GUI gui;
+public class psi8_MainAg extends Agent {
+  private psi8_GUI gui;
   private Thread t;
-  private LinkedHashMap<AID, psi8Player> players = new LinkedHashMap<AID, psi8Player>();
-  private LinkedHashMap<AID, psi8Player> playersPlaying;
+  private LinkedHashMap<AID, psi8_Player> players = new LinkedHashMap<AID, psi8_Player>();
+  private LinkedHashMap<AID, psi8_Player> playersPlaying;
   private int playersReady = 0;
   private int totalCoins = 0;
   private int next = 0;
   private int totalGames = 0;
   private int gamesPlayed = 0;
-  private psi8Player winner;
+  private psi8_Player winner;
 
   protected void setup() {
     System.out.println("Hello! Main Agent " + getAID().getName() + " is ready.");
@@ -42,7 +42,7 @@ public class psi8MainAgent extends Agent {
     * Launch GUI in a new Thread
   */
   private void launchGUI() {
-    gui = new psi8GUI(this);
+    gui = new psi8_GUI(this);
     new Thread() {
       public void run() {
         gui.show();
@@ -67,7 +67,7 @@ public class psi8MainAgent extends Agent {
       DFAgentDescription[] result = DFService.search(this, template);
       gui.log("Sending IDs to players...");
       for (int i = 0; i < result.length; ++i) {
-        psi8Player p = new psi8Player(result[i].getName(), players.size());
+        psi8_Player p = new psi8_Player(result[i].getName(), players.size());
         players.put(result[i].getName(), p);
         gui.addPlayer(p);
         sendMessage(result[i].getName(), "Id#" + String.valueOf(players.size() - 1), ACLMessage.INFORM);
@@ -84,7 +84,7 @@ public class psi8MainAgent extends Agent {
       ACLMessage msg = myAgent.receive(mt);
       if (msg != null) {
         String[] content = msg.getContent().split("#");
-        psi8Player p = playersPlaying.get(msg.getSender());
+        psi8_Player p = playersPlaying.get(msg.getSender());
         switch (content[0]) {
         case "MyCoins":
           addCoins(p, Integer.parseInt(content[1]));
@@ -118,12 +118,12 @@ public class psi8MainAgent extends Agent {
 
   public void requestCoins() {
     String content = "GetCoins#";
-    for (psi8Player p : playersPlaying.values()) {
+    for (psi8_Player p : playersPlaying.values()) {
       content += p.getId() + ",";
     }
     content = content.substring(0, content.length() - 1) + "#";
     int i = 1;
-    for (psi8Player p : playersPlaying.values()) {
+    for (psi8_Player p : playersPlaying.values()) {
       sendMessage(p.getName(), content + String.valueOf(i), ACLMessage.REQUEST);
       i++;
     }
@@ -131,7 +131,7 @@ public class psi8MainAgent extends Agent {
 
   private void requestNextGuess() {
     String req = "GuessCoins#";
-    ArrayList<psi8Player> array = new ArrayList<psi8Player>(playersPlaying.values());
+    ArrayList<psi8_Player> array = new ArrayList<psi8_Player>(playersPlaying.values());
     for (int i = 0; i < next; i++) {
       req += String.valueOf(array.get(i).getBet());
       if ((i + 1) != next) {
@@ -147,13 +147,13 @@ public class psi8MainAgent extends Agent {
         + (this.winner != null ? this.totalCoins : "") + "#";
     String bets = "";
     String coins = "";
-    for (psi8Player p : playersPlaying.values()) {
+    for (psi8_Player p : playersPlaying.values()) {
       bets += p.getBet() + ",";
       coins += p.getCoins() + ",";
     }
     bets = bets.substring(0, bets.length() - 1) + "#";
     coins = coins.substring(0, coins.length() - 1);
-    for (psi8Player p : playersPlaying.values()) {
+    for (psi8_Player p : playersPlaying.values()) {
       sendMessage(p.getName(), content + bets + coins, ACLMessage.INFORM);
     }
   }
@@ -169,11 +169,11 @@ public class psi8MainAgent extends Agent {
   public void newSeries(int totalGames) {
     this.totalGames = totalGames;
     this.gamesPlayed = 0;
-    for (psi8Player p : players.values()) {
+    for (psi8_Player p : players.values()) {
       p.setVictories(0);
       p.setDefeats(0);
     }
-    this.playersPlaying = new LinkedHashMap<AID, psi8Player>();
+    this.playersPlaying = new LinkedHashMap<AID, psi8_Player>();
     this.playersPlaying.putAll(players);
     newGame();
   }
@@ -187,15 +187,15 @@ public class psi8MainAgent extends Agent {
   }
 
   private void changeTurns() {
-    LinkedHashMap<AID, psi8Player> list = new LinkedHashMap<AID, psi8Player>();
-    Map.Entry<AID, psi8Player> pair = players.entrySet().iterator().next();
+    LinkedHashMap<AID, psi8_Player> list = new LinkedHashMap<AID, psi8_Player>();
+    Map.Entry<AID, psi8_Player> pair = players.entrySet().iterator().next();
     players.remove(pair.getKey());
     list.putAll(players);
     list.put(pair.getKey(), pair.getValue());
     players = list;
   }
 
-  private void addCoins(psi8Player p, int coins) {
+  private void addCoins(psi8_Player p, int coins) {
     gui.log("#" + String.valueOf(p.getId()) + " has " + coins + " coins");
     p.setCoins(coins);
     totalCoins += coins;
@@ -207,7 +207,7 @@ public class psi8MainAgent extends Agent {
     }
   }
 
-  private void addBet(psi8Player p, int bet) {
+  private void addBet(psi8_Player p, int bet) {
     gui.log("#" + String.valueOf(p.getId()) + " Bet: " + bet);
     p.setBet(bet);
     if (bet == totalCoins && winner == null) {
@@ -220,11 +220,11 @@ public class psi8MainAgent extends Agent {
       sendResult();
       checkWinner();
       if (this.playersPlaying.size() == 1) {
-        psi8Player loser = this.playersPlaying.values().iterator().next();
+        psi8_Player loser = this.playersPlaying.values().iterator().next();
         gui.log("************* Game Loser: #" + String.valueOf(loser.getId()) + " *************\n");
         loser.setDefeats(loser.getDefeats() + 1);
         changeTurns();
-        this.playersPlaying = new LinkedHashMap<AID, psi8Player>();
+        this.playersPlaying = new LinkedHashMap<AID, psi8_Player>();
         this.playersPlaying.putAll(players);
         this.gamesPlayed++;
       }
@@ -248,8 +248,8 @@ public class psi8MainAgent extends Agent {
   private boolean seriesFinished() {
     gui.setGamesPlayed(this.gamesPlayed);
     if (this.gamesPlayed == this.totalGames) {
-      psi8Player winner = this.players.values().iterator().next();
-      for (psi8Player p : this.players.values()) {
+      psi8_Player winner = this.players.values().iterator().next();
+      for (psi8_Player p : this.players.values()) {
         if (p.getVictories() > winner.getVictories()) {
           winner = p;
         }

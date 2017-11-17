@@ -3,7 +3,7 @@ package agents;
 import jade.core.AID;
 import javafx.beans.property.SimpleIntegerProperty;
 
-public class psi8Player {
+public class psi8_Player {
     private SimpleIntegerProperty id = new SimpleIntegerProperty();
     private SimpleIntegerProperty victories = new SimpleIntegerProperty();
     private SimpleIntegerProperty defeats = new SimpleIntegerProperty();
@@ -11,11 +11,11 @@ public class psi8Player {
     private SimpleIntegerProperty bet = new SimpleIntegerProperty();
     private AID name;
 
-    public psi8Player(int id) {
+    public psi8_Player(int id) {
         this.id.set(id);
     }
 
-    public psi8Player(AID name, int id) {
+    public psi8_Player(AID name, int id) {
         this.name = name;
         this.id.set(id);
     }

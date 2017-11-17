@@ -11,11 +11,11 @@ import jade.domain.DFService;
 import java.awt.List;
 import java.util.*;
 
-public class psi8FixedAgent extends Agent {
+public class psi8_Fixed extends Agent {
   private int id;
   private int position;
-  private LinkedHashMap<Integer, psi8Player> players = new LinkedHashMap<Integer, psi8Player>();
-  private LinkedHashMap<Integer, psi8Player> playersPlaying;
+  private LinkedHashMap<Integer, psi8_Player> players = new LinkedHashMap<Integer, psi8_Player>();
+  private LinkedHashMap<Integer, psi8_Player> playersPlaying;
 
   protected void setup() {
     System.out.println("Hello! Fixed Agent " + getAID().getName() + " is ready.");
@@ -107,13 +107,13 @@ public class psi8FixedAgent extends Agent {
   }
 
   private void savePlayers(String content[]) {
-    playersPlaying = new LinkedHashMap<Integer, psi8Player>();
+    playersPlaying = new LinkedHashMap<Integer, psi8_Player>();
     for (String s : content[1].split(",")) {
       int id = Integer.parseInt(s);
       if (!players.containsKey(id)) {
-        players.put(id, new psi8Player(id));
+        players.put(id, new psi8_Player(id));
       }
-      playersPlaying.put(id, new psi8Player(id));
+      playersPlaying.put(id, new psi8_Player(id));
     }
   }
 
