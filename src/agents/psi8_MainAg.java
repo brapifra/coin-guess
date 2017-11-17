@@ -196,7 +196,7 @@ public class psi8_MainAg extends Agent {
   }
 
   private void addCoins(psi8_Player p, int coins) {
-    gui.log("#" + String.valueOf(p.getId()) + " has " + coins + " coins");
+    gui.log(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " has " + coins + " coins");
     p.setCoins(coins);
     totalCoins += coins;
     playersReady++;
@@ -208,7 +208,7 @@ public class psi8_MainAg extends Agent {
   }
 
   private void addBet(psi8_Player p, int bet) {
-    gui.log("#" + String.valueOf(p.getId()) + " Bet: " + bet);
+    gui.log(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " Bet: " + bet);
     p.setBet(bet);
     if (bet == totalCoins && winner == null) {
       winner = p;
@@ -221,7 +221,8 @@ public class psi8_MainAg extends Agent {
       checkWinner();
       if (this.playersPlaying.size() == 1) {
         psi8_Player loser = this.playersPlaying.values().iterator().next();
-        gui.log("************* Game Loser: #" + String.valueOf(loser.getId()) + " *************\n");
+        gui.log("************* Game Loser: " + loser.getName().getLocalName() + "#" + String.valueOf(loser.getId())
+            + " *************\n");
         loser.setDefeats(loser.getDefeats() + 1);
         changeTurns();
         this.playersPlaying = new LinkedHashMap<AID, psi8_Player>();
@@ -236,7 +237,8 @@ public class psi8_MainAg extends Agent {
 
   private void checkWinner() {
     if (winner != null) {
-      gui.log("************* Partial Winner: #" + String.valueOf(winner.getId()) + " *************\n");
+      gui.log("************* Partial Winner: " + winner.getName().getLocalName() + "#" + String.valueOf(winner.getId())
+          + " *************\n");
       winner.setVictories(winner.getVictories() + 1);
       playersPlaying.remove(winner.getName());
       gui.setPlayersLeft(playersPlaying.size());
@@ -256,7 +258,8 @@ public class psi8_MainAg extends Agent {
       }
       gui.log("\n\n\n\n");
       gui.log("************* Game finished! *************\n");
-      gui.log("************* Winner: #" + String.valueOf(winner.getId()) + " *************\n");
+      gui.log("************* Winner: " + winner.getName().getLocalName() + "#" + String.valueOf(winner.getId())
+          + " *************\n");
       gui.log("\n\n\n\n");
       return true;
     }

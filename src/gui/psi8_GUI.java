@@ -35,8 +35,7 @@ public class psi8_GUI extends Application {
     protected static SimpleIntegerProperty gamesPlayed = new SimpleIntegerProperty(0);
     protected static SimpleIntegerProperty totalPlayers = new SimpleIntegerProperty(0);
     protected static SimpleIntegerProperty playersLeft = new SimpleIntegerProperty(0);
-    protected static ObservableList<psi8_Player> playersPlaying = FXCollections.observableArrayList();
-    protected static ObservableList<psi8_Player> playersNotPlaying = FXCollections.observableArrayList();
+    protected static ObservableList<psi8_Player> players = FXCollections.observableArrayList();
     private VBox root;
     private static ListView<String> console;
     private static psi8_MainAg agent;
@@ -56,7 +55,7 @@ public class psi8_GUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         root = new VBox();
-        root.getChildren().addAll(buildMenu(), buildNumbers(), buildTables(), buildConsole());
+        root.getChildren().addAll(buildMenu(), buildNumbers(), buildTable(), buildConsole());
         root.setVgrow(console, Priority.ALWAYS);
         Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add(this.getClass().getResource("psi8_style.css").toExternalForm());
@@ -80,7 +79,7 @@ public class psi8_GUI extends Application {
                 root.setDisable(false);
             }
             log("New series of " + String.valueOf(totalGames.get()) + " games started!");
-            log(String.valueOf(playersPlaying.size()) + " players playing\n");
+            log(String.valueOf(players.size()) + " players playing\n");
             this.agent.newSeries(totalGames.get());
         });
         MenuItem runStop = new MenuItem("Stop");
@@ -142,37 +141,18 @@ public class psi8_GUI extends Application {
         return console;
     }
 
-    private HBox buildTables() {
-        HBox hbox = new HBox();
-        Label stillPlaying = new Label("Players still playing:");
-        stillPlaying.getStyleClass().add("bold");
-        Label notPlaying = new Label("Players not playing:");
-        notPlaying.getStyleClass().add("bold");
-        VBox vboxPlaying = new VBox(stillPlaying, buildPlayersTable(playersPlaying));
-        VBox vboxNotPlaying = new VBox(notPlaying, buildPlayersTable(playersNotPlaying));
-        vboxPlaying.getStyleClass().add("vbox");
-        vboxNotPlaying.getStyleClass().add("vbox");
-        hbox.getChildren().addAll(vboxPlaying, vboxNotPlaying);
-        hbox.getStyleClass().add("hbox-tables");
-        hbox.setHgrow(vboxPlaying, Priority.ALWAYS);
-        hbox.setHgrow(vboxNotPlaying, Priority.ALWAYS);
-        return hbox;
-    }
-
-    private TableView buildPlayersTable(ObservableList<psi8_Player> list) {
+    private TableView buildTable() {
         TableView<psi8_Player> table = new TableView<>();
+        TableColumn<psi8_Player, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<psi8_Player, String>("localName"));
         TableColumn<psi8_Player, Integer> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<psi8_Player, Integer>("id"));
         TableColumn<psi8_Player, Integer> victoriesColumn = new TableColumn<>("Victories");
         victoriesColumn.setCellValueFactory(new PropertyValueFactory<psi8_Player, Integer>("victories"));
         TableColumn<psi8_Player, Integer> defeatsColumn = new TableColumn<>("Defeats");
         defeatsColumn.setCellValueFactory(new PropertyValueFactory<psi8_Player, Integer>("defeats"));
-        TableColumn<psi8_Player, Integer> coinsColumn = new TableColumn<>("Coins");
-        coinsColumn.setCellValueFactory(new PropertyValueFactory<psi8_Player, Integer>("coins"));
-        TableColumn<psi8_Player, Integer> betColumn = new TableColumn<>("Bet");
-        betColumn.setCellValueFactory(new PropertyValueFactory<psi8_Player, Integer>("bet"));
-        table.getColumns().addAll(idColumn, victoriesColumn, defeatsColumn, coinsColumn, betColumn);
-        table.setItems(list);
+        table.getColumns().addAll(nameColumn, idColumn, victoriesColumn, defeatsColumn);
+        table.setItems(players);
         return table;
     }
 
@@ -230,15 +210,15 @@ public class psi8_GUI extends Application {
 
     public void addPlayer(psi8_Player p) {
         Platform.runLater(() -> {
-            playersPlaying.add(p);
-            totalPlayers.set(playersPlaying.size() + playersNotPlaying.size());
-            playersLeft.set(playersPlaying.size());
+            players.add(p);
+            totalPlayers.set(players.size());
+            playersLeft.set(players.size());
         });
     }
 
     public void setGamesPlayed(int i) {
         Platform.runLater(() -> {
-            playersLeft.set(playersPlaying.size());
+            playersLeft.set(players.size());
             gamesPlayed.set(i);
         });
     }

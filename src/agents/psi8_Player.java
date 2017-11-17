@@ -2,13 +2,15 @@ package agents;
 
 import jade.core.AID;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 public class psi8_Player {
     private SimpleIntegerProperty id = new SimpleIntegerProperty();
     private SimpleIntegerProperty victories = new SimpleIntegerProperty();
     private SimpleIntegerProperty defeats = new SimpleIntegerProperty();
-    private SimpleIntegerProperty coins = new SimpleIntegerProperty();
-    private SimpleIntegerProperty bet = new SimpleIntegerProperty();
+    private SimpleStringProperty localName = new SimpleStringProperty();
+    private int coins;
+    private int bet;
     private AID name;
 
     public psi8_Player(int id) {
@@ -18,6 +20,7 @@ public class psi8_Player {
     public psi8_Player(AID name, int id) {
         this.name = name;
         this.id.set(id);
+        this.localName.set(name.getLocalName());
     }
 
     public int getId() {
@@ -45,19 +48,19 @@ public class psi8_Player {
     }
 
     public int getCoins() {
-        return coins.get();
+        return coins;
     }
 
     public void setCoins(int coins) {
-        this.coins.set(coins);
+        this.coins = coins;
     }
 
     public int getBet() {
-        return bet.get();
+        return bet;
     }
 
     public void setBet(int bet) {
-        this.bet.set(bet);
+        this.bet = bet;
     }
 
     public AID getName() {
@@ -66,10 +69,7 @@ public class psi8_Player {
 
     public void setName(AID name) {
         this.name = name;
-    }
-
-    public SimpleIntegerProperty coinsProperty() {
-        return this.coins;
+        this.localName.set(name.getLocalName());
     }
 
     public SimpleIntegerProperty victoriesProperty() {
@@ -84,7 +84,7 @@ public class psi8_Player {
         return this.id;
     }
 
-    public SimpleIntegerProperty betProperty() {
-        return this.bet;
+    public SimpleStringProperty localNameProperty() {
+        return this.localName;
     }
 }

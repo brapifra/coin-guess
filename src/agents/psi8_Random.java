@@ -15,6 +15,7 @@ import java.util.*;
 public class psi8_Random extends Agent {
   private int id;
   private int position;
+  private int myBet;
   private LinkedHashMap<Integer, psi8_Player> players = new LinkedHashMap<Integer, psi8_Player>();
   private LinkedHashMap<Integer, psi8_Player> playersPlaying;
 
@@ -119,19 +120,29 @@ public class psi8_Random extends Agent {
   }
 
   private int guessCoins(String content[]) {
-    int maxCoins = playersPlaying.size() * 3;
+    int maxCoins;
+    if (myBet == 0) {
+      maxCoins = ThreadLocalRandom.current().nextInt(myBet, ((playersPlaying.size() - 1) * 3) + 1);
+    } else {
+      maxCoins = ThreadLocalRandom.current().nextInt(myBet, (playersPlaying.size() * 3) + 1);
+    }
     if (content.length < 2) {
       return maxCoins;
     }
     content = content[1].split(",");
     boolean loop = true;
     while (Arrays.stream(content).anyMatch(String.valueOf(maxCoins)::equals)) {
-      maxCoins--;
+      if (myBet == 0) {
+        maxCoins = ThreadLocalRandom.current().nextInt(myBet, ((playersPlaying.size() - 1) * 3) + 1);
+      } else {
+        maxCoins = ThreadLocalRandom.current().nextInt(myBet, (playersPlaying.size() * 3) + 1);
+      }
     }
     return maxCoins;
   }
 
   private int myCoins() {
-    return ThreadLocalRandom.current().nextInt(0, 3 + 1);
+    myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
+    return myBet;
   }
 }
