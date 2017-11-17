@@ -229,7 +229,7 @@ public class psi8_MainAg extends Agent {
         this.playersPlaying.putAll(players);
         this.gamesPlayed++;
       }
-      if (!seriesFinished()) {
+      if (!isSeriesFinished()) {
         newGame();
       }
     }
@@ -247,7 +247,7 @@ public class psi8_MainAg extends Agent {
     }
   }
 
-  private boolean seriesFinished() {
+  private boolean isSeriesFinished() {
     gui.setGamesPlayed(this.gamesPlayed);
     if (this.gamesPlayed == this.totalGames) {
       psi8_Player winner = this.players.values().iterator().next();
