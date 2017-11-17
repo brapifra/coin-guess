@@ -169,7 +169,7 @@ public class psi8MainAgent extends Agent {
   public void newSeries(int totalGames) {
     this.totalGames = totalGames;
     this.gamesPlayed = 0;
-    for(psi8Player p: players.values()){
+    for (psi8Player p : players.values()) {
       p.setVictories(0);
       p.setDefeats(0);
     }

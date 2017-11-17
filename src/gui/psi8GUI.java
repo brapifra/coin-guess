@@ -19,7 +19,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -39,7 +38,7 @@ public class psi8GUI extends Application {
     protected static ObservableList<psi8Player> playersPlaying = FXCollections.observableArrayList();
     protected static ObservableList<psi8Player> playersNotPlaying = FXCollections.observableArrayList();
     private VBox root;
-    private static TextArea console;
+    private static ListView<String> console;
     private static psi8MainAgent agent;
 
     public psi8GUI(psi8MainAgent agent) {
@@ -132,15 +131,14 @@ public class psi8GUI extends Application {
         Label gamesLabel = new Label("0");
         gamesLabel.getStyleClass().add("margin-right");
         gamesLabel.textProperty().bind(totalGames.asString());
-        hbox.getChildren().addAll(leftPLabel, new Label("/"), playersLabel, new Label("players"), leftGLabel,
-                new Label("/"), gamesLabel, new Label("games"));
+        hbox.getChildren().addAll(leftPLabel, new Label(" of "), playersLabel, new Label("players"), leftGLabel,
+                new Label(" of "), gamesLabel, new Label("games"));
         return hbox;
     }
 
-    private TextArea buildConsole() {
-        console = new TextArea();
-        console.setEditable(false);
-        console.appendText("Information will be shown here if verbose option is enabled\n");
+    private ListView buildConsole() {
+        console = new ListView();
+        console.getItems().add("Information will be shown here if verbose option is enabled\n");
         return console;
     }
 
@@ -178,12 +176,12 @@ public class psi8GUI extends Application {
         return table;
     }
 
-    public static void log(String msg) {
+    public void log(String msg) {
         if (!verbose || console == null) {
             return;
         }
         Platform.runLater(() -> {
-            console.appendText(msg + "\n");
+            console.getItems().add(msg);
         });
     }
 
