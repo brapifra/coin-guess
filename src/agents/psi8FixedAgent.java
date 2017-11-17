@@ -7,12 +7,15 @@ import jade.lang.acl.MessageTemplate;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
 import jade.domain.DFService;
-import java.util.HashMap;
+
+import java.awt.List;
+import java.util.*;
 
 public class psi8FixedAgent extends Agent {
   private int id;
   private int position;
-  private HashMap<Integer, psi8Player> players = new HashMap<Integer, psi8Player>();
+  private LinkedHashMap<Integer, psi8Player> players = new LinkedHashMap<Integer, psi8Player>();
+  private LinkedHashMap<Integer, psi8Player> playersPlaying;
 
   protected void setup() {
     System.out.println("Hello! Fixed Agent " + getAID().getName() + " is ready.");
@@ -60,7 +63,7 @@ public class psi8FixedAgent extends Agent {
           id = Integer.parseInt(content[1]);
           break;
         case "Result":
-          System.out.println(msg.getContent());
+          // Nothing to do here
           break;
         default:
           System.out.println(msg.getContent());
@@ -80,18 +83,12 @@ public class psi8FixedAgent extends Agent {
         String[] content = msg.getContent().split("#");
         switch (content[0]) {
         case "GetCoins":
-          for (String s : content[1].split(",")) {
-            int id = Integer.parseInt(s);
-            if (!players.containsKey(id)) {
-              players.put(id, new psi8Player(id));
-            }
-          }
+          savePlayers(content);
           position = Integer.parseInt(content[2]);
           sendReply(msg.createReply(), "MyCoins#3");
           break;
         case "GuessCoins":
-        //No se puede repetir
-          sendReply(msg.createReply(), "MyBet#3");
+          sendReply(msg.createReply(), "MyBet#" + guessCoins(content));
           break;
         default:
           System.out.println(msg.getContent());
@@ -107,5 +104,29 @@ public class psi8FixedAgent extends Agent {
     msg.setPerformative(ACLMessage.INFORM);
     msg.setContent(content);
     send(msg);
+  }
+
+  private void savePlayers(String content[]) {
+    playersPlaying = new LinkedHashMap<Integer, psi8Player>();
+    for (String s : content[1].split(",")) {
+      int id = Integer.parseInt(s);
+      if (!players.containsKey(id)) {
+        players.put(id, new psi8Player(id));
+      }
+      playersPlaying.put(id, new psi8Player(id));
+    }
+  }
+
+  private int guessCoins(String content[]) {
+    int maxCoins = playersPlaying.size() * 3;
+    if (content.length < 2) {
+      return maxCoins;
+    }
+    content = content[1].split(",");
+    boolean loop = true;
+    while (Arrays.stream(content).anyMatch(String.valueOf(maxCoins)::equals)) {
+      maxCoins--;
+    }
+    return maxCoins;
   }
 }

@@ -33,7 +33,7 @@ public class psi8GUI extends Application {
     public static boolean ready = false;
     protected static boolean verbose = false;
     protected static SimpleIntegerProperty totalGames = new SimpleIntegerProperty(0);
-    protected static SimpleIntegerProperty gamesLeft = new SimpleIntegerProperty(0);
+    protected static SimpleIntegerProperty gamesPlayed = new SimpleIntegerProperty(0);
     protected static SimpleIntegerProperty totalPlayers = new SimpleIntegerProperty(0);
     protected static SimpleIntegerProperty playersLeft = new SimpleIntegerProperty(0);
     protected static ObservableList<psi8Player> playersPlaying = FXCollections.observableArrayList();
@@ -76,7 +76,13 @@ public class psi8GUI extends Application {
         Menu run = new Menu("Run");
         MenuItem runNew = new MenuItem("New");
         runNew.setOnAction(event -> {
-            this.agent.requestCoins();
+            if (totalGames.get() == 0) {
+                buildPopup();
+                root.setDisable(false);
+            }
+            log("New series of " + String.valueOf(totalGames.get()) + " games started!");
+            log(String.valueOf(playersPlaying.size()) + " players playing\n");
+            this.agent.newSeries(totalGames.get());
         });
         MenuItem runStop = new MenuItem("Stop");
         runStop.setOnAction(event -> {
@@ -121,7 +127,7 @@ public class psi8GUI extends Application {
         playersLabel.textProperty().bind(totalPlayers.asString());
         playersLabel.getStyleClass().add("margin-right");
         Label leftGLabel = new Label("0");
-        leftGLabel.textProperty().bind(gamesLeft.asString());
+        leftGLabel.textProperty().bind(gamesPlayed.asString());
         leftGLabel.getStyleClass().add("margin-left");
         Label gamesLabel = new Label("0");
         gamesLabel.getStyleClass().add("margin-right");
@@ -173,9 +179,9 @@ public class psi8GUI extends Application {
     }
 
     public static void log(String msg) {
-        /*if (!verbose || console == null) {
+        if (!verbose || console == null) {
             return;
-        }*/
+        }
         Platform.runLater(() -> {
             console.appendText(msg + "\n");
         });
@@ -188,10 +194,13 @@ public class psi8GUI extends Application {
         TextField field = new TextField();
         Button btn = new Button("Apply");
         btn.setOnAction(event -> {
-            totalGames.set(Integer.parseInt(field.getText()));
-            gamesLeft.set(Integer.parseInt(field.getText()));
-            log("Number of games changed to " + String.valueOf(totalGames.get()));
-            stage.close();
+            try {
+                totalGames.set(Integer.parseInt(field.getText()));
+                gamesPlayed.set(0);
+                log("Number of games changed to " + String.valueOf(totalGames.get()));
+                stage.close();
+            } catch (Exception e) {
+            }
         });
         vbox.getStyleClass().add("vbox");
         vbox.getChildren().addAll(field, btn);
@@ -226,6 +235,19 @@ public class psi8GUI extends Application {
             playersPlaying.add(p);
             totalPlayers.set(playersPlaying.size() + playersNotPlaying.size());
             playersLeft.set(playersPlaying.size());
+        });
+    }
+
+    public void setGamesPlayed(int i) {
+        Platform.runLater(() -> {
+            playersLeft.set(playersPlaying.size());
+            gamesPlayed.set(i);
+        });
+    }
+
+    public void setPlayersLeft(int i) {
+        Platform.runLater(() -> {
+            playersLeft.set(i);
         });
     }
 }
