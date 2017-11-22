@@ -211,13 +211,11 @@ public class psi8_GUI extends Application {
         Platform.runLater(() -> {
             players.add(p);
             totalPlayers.set(players.size());
-            playersLeft.set(players.size());
         });
     }
 
     public void setGamesPlayed(int i) {
         Platform.runLater(() -> {
-            playersLeft.set(players.size());
             gamesPlayed.set(i);
         });
     }
