@@ -12,12 +12,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.awt.List;
 import java.util.*;
 
-public class psi8_Random extends Agent {
+public class psi8_Intel extends Agent {
   private int id;
   private int position;
   private int myBet;
-  private LinkedHashMap<Integer, psi8_Player> players = new LinkedHashMap<Integer, psi8_Player>();
-  private LinkedHashMap<Integer, psi8_Player> playersPlaying;
+  private LinkedHashMap<Integer, psi8_IPlayer> players = new LinkedHashMap<Integer, psi8_IPlayer>();
+  private LinkedHashMap<Integer, psi8_IPlayer> playersPlaying = new LinkedHashMap<Integer, psi8_IPlayer>();
 
   protected void setup() {
     System.out.println("Hello! Fixed Agent " + getAID().getName() + " is ready.");
@@ -65,7 +65,7 @@ public class psi8_Random extends Agent {
           id = Integer.parseInt(content[1]);
           break;
         case "Result":
-          // Nothing to do here
+          updateQualities(content[4].split(","));
           break;
         default:
           System.out.println(msg.getContent());
@@ -85,12 +85,16 @@ public class psi8_Random extends Agent {
         String[] content = msg.getContent().split("#");
         switch (content[0]) {
         case "GetCoins":
+          position = Integer.parseInt(content[2]) - 1;
           savePlayers(content);
-          position = Integer.parseInt(content[2]);
           sendReply(msg.createReply(), "MyCoins#" + myCoins());
           break;
         case "GuessCoins":
-          sendReply(msg.createReply(), "MyBet#" + guessCoins(content));
+          String[] previousGuesses = new String[] {};
+          if (content.length == 2) {
+            previousGuesses = content[1].split(",");
+          }
+          sendReply(msg.createReply(), "MyBet#" + guessCoins(previousGuesses));
           break;
         default:
           System.out.println(msg.getContent());
@@ -108,35 +112,64 @@ public class psi8_Random extends Agent {
     send(msg);
   }
 
-  private void savePlayers(String content[]) {
-    playersPlaying = new LinkedHashMap<Integer, psi8_Player>();
-    for (String s : content[1].split(",")) {
-      int id = Integer.parseInt(s);
+  private synchronized void savePlayers(String content[]) {
+    playersPlaying = new LinkedHashMap<Integer, psi8_IPlayer>();
+    String[] ids = content[1].split(",");
+    for (int position = 0; position < ids.length; position++) {
+      int id = Integer.parseInt(ids[position]);
       if (this.id == id) {
         continue;
       }
       if (!players.containsKey(id)) {
-        players.put(id, new psi8_Player(id));
+        players.put(id, new psi8_IPlayer(id, ids.length));
       }
-      playersPlaying.put(id, new psi8_Player(id));
+      psi8_IPlayer p = players.get(id);
+      p.setCurrentState(position);
+      playersPlaying.put(id, p);
     }
   }
 
-  private int guessCoins(String content[]) {
-    int maxCoins;
-    maxCoins = ThreadLocalRandom.current().nextInt(myBet, (playersPlaying.size() * 3) + myBet + 1);
-    if (content.length < 2) {
-      return maxCoins;
+  private synchronized int guessCoins(String previousGuesses[]) {
+    int guess = myBet;
+    for (psi8_IPlayer p : playersPlaying.values()) {
+      psi8_State s = p.getCurrentState();
+
+      if (s.getBestAction().getQuality() == 0) {
+        s = p.getPrevState();
+        for (psi8_State state : p.getStates()) {
+          if (state.getBestAction().getQuality() > s.getBestAction().getQuality()) {
+            s = state;
+          }
+        }
+      }
+
+      psi8_Action best = s.getBestAction();
+      /*System.out
+          .println("I think player " + p.getId() + " has " + best.getCoins() + " coins in position " + s.getPosition());*/
+      guess += best.getCoins();
     }
-    content = content[1].split(",");
-    boolean loop = true;
-    while (Arrays.stream(content).anyMatch(String.valueOf(maxCoins)::equals)) {
-      maxCoins = ThreadLocalRandom.current().nextInt(myBet, (playersPlaying.size() * 3) + myBet + 1);
+
+    while (Arrays.stream(previousGuesses).anyMatch(String.valueOf(guess)::equals)) {
+      guess = ThreadLocalRandom.current().nextInt(myBet, (playersPlaying.size() * 3) + myBet + 1);
     }
-    return maxCoins;
+    return guess;
   }
 
-  private int myCoins() {
+  private synchronized void updateQualities(String coins[]) {
+    int i = -1;
+    for (psi8_IPlayer p : playersPlaying.values()) {
+      i++;
+      if (i == position) {
+        continue;
+      }
+      psi8_State s = p.getCurrentState();
+      psi8_State nextS = p.getNextState();
+      psi8_Action a = s.getAction(Integer.parseInt(coins[i]));
+      s.updateActionQuality(a, nextS.getBestAction());
+    }
+  }
+
+  private synchronized int myCoins() {
     myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
     return myBet;
   }

@@ -161,6 +161,9 @@ public class psi8_GUI extends Application {
         }
         Platform.runLater(() -> {
             console.getItems().add(msg);
+            if (msg.charAt(msg.length() - 1) == '\n') {
+                console.getItems().add("");
+            }
         });
     }
 
