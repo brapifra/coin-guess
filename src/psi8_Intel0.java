@@ -196,14 +196,15 @@ public class psi8_Intel0 extends Agent {
     }
   }
 
-  private int myCoins() {
+  private synchronized int myCoins() {
     if (loseStreak > 2) {
       myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
       loseStreak = 0;
       return myBet;
     }
 
-    int div = position == 0 ? 4 : position % 5;
+    this.doWait((position % 3) + 1);
+    int div = position == 0 ? 4 : (position % 3) + 1;
     myBet = (int) (System.currentTimeMillis() % div);
 
     return myBet;
