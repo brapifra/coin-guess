@@ -1,5 +1,3 @@
-package agents;
-
 public class psi8_Action {
   private int coins;
   private double quality;

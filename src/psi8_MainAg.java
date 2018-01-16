@@ -1,5 +1,3 @@
-package agents;
-
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.*;
@@ -10,9 +8,6 @@ import jade.domain.FIPAException;
 import jade.domain.DFService;
 import javafx.stage.Stage;
 import java.util.*;
-
-import agents.psi8_Player;
-import gui.psi8_GUI;
 
 public class psi8_MainAg extends Agent {
   private psi8_GUI gui;

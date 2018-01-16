@@ -1,5 +1,3 @@
-package agents;
-
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
@@ -13,7 +11,7 @@ import java.util.concurrent.Semaphore;
 import java.awt.List;
 import java.util.*;
 
-public class psi8_Intel extends Agent {
+public class psi8_Intel0 extends Agent {
   private int id;
   private int position;
   private int myBet;

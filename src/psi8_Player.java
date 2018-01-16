@@ -1,5 +1,3 @@
-package agents;
-
 import jade.core.AID;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

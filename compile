@@ -1,7 +1,7 @@
 #!/bin/bash
-mkdir -p build/gui
-cp src/gui/psi8_style.css build/gui
-/home/jdk1.8.0_151/bin/javac -cp "lib/jade.jar" src/**/*.java -d build
+mkdir -p build
+cp src/psi8_style.css build
+/home/jdk1.8.0_151/bin/javac -cp "lib/jade.jar" src/*.java -d build
 #/home/jdk1.8.0_151/bin/java -cp "lib/jade.jar:build" gui.psi8GUI
-/home/jdk1.8.0_151/bin/java -cp "lib/jade.jar:build" jade.Boot -gui -agents "Main:agents.psi8_MainAg;Fixed:agents.psi8_Fixed;Random:agents.psi8_Random;Intel:agents.psi8_Intel;"
+/home/jdk1.8.0_151/bin/java -cp "lib/jade.jar:build" jade.Boot -gui -agents "Main:psi8_MainAg;Fixed:psi8_Fixed;Random:psi8_Random;Intel:psi8_Intel0;"
 #/home/jdk1.8.0_151/bin/java -cp "lib/jade.jar:build" agents.Prueba

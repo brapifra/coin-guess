@@ -1,5 +1,3 @@
-package agents;
-
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;

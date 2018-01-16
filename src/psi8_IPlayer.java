@@ -1,5 +1,3 @@
-package agents;
-
 import java.util.ArrayList;
 
 public class psi8_IPlayer extends psi8_Player {
