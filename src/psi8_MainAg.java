@@ -207,7 +207,8 @@ public class psi8_MainAg extends Agent {
 
   private void addBet(psi8_Player p, int bet) {
     if (bet < p.getCoins()) {
-      gui.buildWarningPopup(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " Bet: " + bet + " Coins: " + p.getCoins());
+      gui.buildWarningPopup(
+          p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " Bet: " + bet + " Coins: " + p.getCoins());
     }
     gui.log(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " Bet: " + bet);
     p.setBet(bet);

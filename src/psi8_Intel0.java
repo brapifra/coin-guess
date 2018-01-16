@@ -66,15 +66,15 @@ public class psi8_Intel0 extends Agent {
           id = Integer.parseInt(content[1]);
           break;
         case "Result":
-          if(!semaphore.tryAcquire()){
+          if (!semaphore.tryAcquire()) {
             break;
           }
-          if(content[1].equals("")){
+          if (content[1].equals("")) {
             updateQualities(content[4].split(","), false);
-          } else  {
-            int winner  = Integer.parseInt(content[1]);
-            updateQualities(content[4].split(","), winner==position);
-            if(winner == position){
+          } else {
+            int winner = Integer.parseInt(content[1]);
+            updateQualities(content[4].split(","), winner == position);
+            if (winner == position) {
               loseStreak = 0;
             } else {
               loseStreak++;
@@ -152,14 +152,14 @@ public class psi8_Intel0 extends Agent {
       if (s.getBestAction().getQuality() == 0) {
         s = p.getPrevState();
       }
-      
-      /*if(s.getBestAction().getQuality() == 0){
+
+      if (s.getBestAction().getQuality() == 0) {
         for (psi8_State state : p.getStates()) {
-            if (state.getBestAction().getQuality() > s.getBestAction().getQuality()) {
-              s = state;
-            }
+          if (state.getBestAction().getQuality() > s.getBestAction().getQuality()) {
+            s = state;
+          }
         }
-      }*/
+      }
 
       psi8_Action best = s.getBestAction();
       guess += best.getCoins();
@@ -176,15 +176,15 @@ public class psi8_Intel0 extends Agent {
     double winnerMultiplier = 2;
     double reward = 1;
 
-    if(winner){
+    if (winner) {
       reward = winnerMultiplier * reward;
     }
-    
+
     for (psi8_IPlayer p : playersPlaying.values()) {
       if (i == position) {
         i++;
       }
-      if (i >= coins.length){
+      if (i >= coins.length) {
         break;
       }
 
@@ -192,29 +192,20 @@ public class psi8_Intel0 extends Agent {
       psi8_State nextS = p.getNextState();
       psi8_Action a = s.getAction(Integer.parseInt(coins[i]));
       s.updateActionQuality(reward, a, nextS.getRealBestAction());
-      
-      /*if(s.getLastBestAction().getCoins() != a.getCoins()){
-        s.updateActionQuality(0, s.getLastBestAction(), nextS.getBestAction());
-      }*/
       i++;
     }
   }
 
   private int myCoins() {
-    long millis= System.currentTimeMillis();
-    if (loseStreak > 5) {
+    if (loseStreak > 2) {
       myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
       loseStreak = 0;
       return myBet;
     }
 
-    if (millis % 3 == 0) {
-      myBet = 3;
-    } else if (millis % 2 == 0) {
-      myBet = 2;
-    } else {
-      myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
-    }
+    int div = position == 0 ? 4 : position % 5;
+    myBet = (int) (System.currentTimeMillis() % div);
+
     return myBet;
   }
 }

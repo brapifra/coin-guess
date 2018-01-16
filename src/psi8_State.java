@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class psi8_State {
-  private double gamma = 0.5;
+  private final double gamma = 0.5;
   private double learningRate = 1;
-  private final double minLearningRate = 0.15;
+  private final double minLearningRate = 0.25;
   private final double decFactorLR = 0.0005;
   private final double epsilon = 0.95;
   private int position;
@@ -25,17 +25,13 @@ public class psi8_State {
     updatedAction.setQuality(updatedQuality);
     actions.set(psi8_action.getCoins(), updatedAction);
 
-    if(learningRate > minLearningRate){
+    if (learningRate > minLearningRate) {
       learningRate = learningRate - decFactorLR;
     }
-
-    /*if(gamma > minLearningRate){
-      gamma = gamma - decFactorLR;
-    }*/
   }
 
   public psi8_Action getBestAction() {
-    if(Math.random() > epsilon){
+    if (Math.random() > epsilon) {
       lastBest = getRandomAction();
       return lastBest;
     }
@@ -51,20 +47,17 @@ public class psi8_State {
     return lastBest;
   }
 
-  public psi8_Action getRealBestAction(){
+  public psi8_Action getRealBestAction() {
     psi8_Action best = actions.get(0);
     for (int i = 0; i < actions.size(); i++) {
       if (actions.get(i).getQuality() > best.getQuality()) {
         best = actions.get(i);
       }
     }
-    if (best.getQuality() == 0) {
-      best = getRandomAction();
-    }
     return best;
   }
 
-  public psi8_Action getLastBestAction(){
+  public psi8_Action getLastBestAction() {
     return lastBest;
   }
 
