@@ -196,6 +196,9 @@ public class psi8_MainAg extends Agent {
   }
 
   private void addCoins(psi8_Player p, int coins) {
+    if (coins < 0 || coins > 3) {
+      gui.buildWarningPopup(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " has " + coins + " coins");
+    }
     gui.log(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " has " + coins + " coins");
     p.setCoins(coins);
     totalCoins += coins;
@@ -208,6 +211,9 @@ public class psi8_MainAg extends Agent {
   }
 
   private void addBet(psi8_Player p, int bet) {
+    if (bet < p.getCoins()) {
+      gui.buildWarningPopup(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " Bet: " + bet + " Coins: " + p.getCoins());
+    }
     gui.log(p.getName().getLocalName() + "#" + String.valueOf(p.getId()) + " Bet: " + bet);
     p.setBet(bet);
     if (bet == totalCoins && winner == null) {
@@ -251,7 +257,7 @@ public class psi8_MainAg extends Agent {
     if (this.gamesPlayed == this.totalGames) {
       psi8_Player winner = this.players.values().iterator().next();
       for (psi8_Player p : this.players.values()) {
-        if (p.getVictories() > winner.getVictories()) {
+        if (p.getDefeats() < winner.getDefeats()) {
           winner = p;
         }
       }

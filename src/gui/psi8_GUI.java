@@ -35,7 +35,7 @@ public class psi8_GUI extends Application {
     protected static SimpleIntegerProperty gamesPlayed = new SimpleIntegerProperty(0);
     protected static SimpleIntegerProperty totalPlayers = new SimpleIntegerProperty(0);
     protected static ObservableList<psi8_Player> players = FXCollections.observableArrayList();
-    private VBox root;
+    private static VBox root;
     private static ListView<String> console;
     private static psi8_MainAg agent;
 
@@ -208,6 +208,22 @@ public class psi8_GUI extends Application {
         stage.setTitle("Help");
         stage.setScene(s);
         stage.showAndWait();
+    }
+
+    public void buildWarningPopup(String cheater) {
+        this.agent.doSuspend();
+        Platform.runLater(() -> {
+            root.setDisable(true);
+            Stage stage = new Stage();
+            VBox vbox = new VBox();
+            vbox.getStyleClass().add("vbox");
+            vbox.getChildren().addAll(new Label("Cheater detected!"), new Label(cheater));
+            Scene s = new Scene(vbox, 300, 200);
+            s.getStylesheets().add(psi8_GUI.class.getResource("psi8_style.css").toExternalForm());
+            stage.setTitle("Warning");
+            stage.setScene(s);
+            stage.showAndWait();
+        });
     }
 
     public void addPlayer(psi8_Player p) {

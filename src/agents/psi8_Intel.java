@@ -8,6 +8,7 @@ import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
 import jade.domain.DFService;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.Semaphore;
 
 import java.awt.List;
 import java.util.*;
@@ -16,6 +17,8 @@ public class psi8_Intel extends Agent {
   private int id;
   private int position;
   private int myBet;
+  private int loseStreak = 0;
+  private Semaphore semaphore = new Semaphore(0);
   private LinkedHashMap<Integer, psi8_IPlayer> players = new LinkedHashMap<Integer, psi8_IPlayer>();
   private LinkedHashMap<Integer, psi8_IPlayer> playersPlaying = new LinkedHashMap<Integer, psi8_IPlayer>();
 
@@ -65,7 +68,20 @@ public class psi8_Intel extends Agent {
           id = Integer.parseInt(content[1]);
           break;
         case "Result":
-          updateQualities(content[4].split(","));
+          if(!semaphore.tryAcquire()){
+            break;
+          }
+          if(content[1].equals("")){
+            updateQualities(content[4].split(","), false);
+          } else  {
+            int winner  = Integer.parseInt(content[1]);
+            updateQualities(content[4].split(","), winner==position);
+            if(winner == position){
+              loseStreak = 0;
+            } else {
+              loseStreak++;
+            }
+          }
           break;
         default:
           System.out.println(msg.getContent());
@@ -88,6 +104,7 @@ public class psi8_Intel extends Agent {
           position = Integer.parseInt(content[2]) - 1;
           savePlayers(content);
           sendReply(msg.createReply(), "MyCoins#" + myCoins());
+          semaphore.release();
           break;
         case "GuessCoins":
           String[] previousGuesses = new String[] {};
@@ -136,16 +153,17 @@ public class psi8_Intel extends Agent {
 
       if (s.getBestAction().getQuality() == 0) {
         s = p.getPrevState();
-        for (psi8_State state : p.getStates()) {
-          if (state.getBestAction().getQuality() > s.getBestAction().getQuality()) {
-            s = state;
-          }
-        }
       }
+      
+      /*if(s.getBestAction().getQuality() == 0){
+        for (psi8_State state : p.getStates()) {
+            if (state.getBestAction().getQuality() > s.getBestAction().getQuality()) {
+              s = state;
+            }
+        }
+      }*/
 
       psi8_Action best = s.getBestAction();
-      /*System.out
-          .println("I think player " + p.getId() + " has " + best.getCoins() + " coins in position " + s.getPosition());*/
       guess += best.getCoins();
     }
 
@@ -155,22 +173,50 @@ public class psi8_Intel extends Agent {
     return guess;
   }
 
-  private synchronized void updateQualities(String coins[]) {
-    int i = -1;
+  private synchronized void updateQualities(String coins[], boolean winner) {
+    int i = 0;
+    double winnerMultiplier = 2;
+    double reward = 1;
+
+    if(winner){
+      reward = winnerMultiplier * reward;
+    }
+    
     for (psi8_IPlayer p : playersPlaying.values()) {
-      i++;
       if (i == position) {
-        continue;
+        i++;
       }
+      if (i >= coins.length){
+        break;
+      }
+
       psi8_State s = p.getCurrentState();
       psi8_State nextS = p.getNextState();
       psi8_Action a = s.getAction(Integer.parseInt(coins[i]));
-      s.updateActionQuality(a, nextS.getBestAction());
+      s.updateActionQuality(reward, a, nextS.getRealBestAction());
+      
+      /*if(s.getLastBestAction().getCoins() != a.getCoins()){
+        s.updateActionQuality(0, s.getLastBestAction(), nextS.getBestAction());
+      }*/
+      i++;
     }
   }
 
-  private synchronized int myCoins() {
-    myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
+  private int myCoins() {
+    long millis= System.currentTimeMillis();
+    if (loseStreak > 5) {
+      myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
+      loseStreak = 0;
+      return myBet;
+    }
+
+    if (millis % 3 == 0) {
+      myBet = 3;
+    } else if (millis % 2 == 0) {
+      myBet = 2;
+    } else {
+      myBet = ThreadLocalRandom.current().nextInt(0, 3 + 1);
+    }
     return myBet;
   }
 }
