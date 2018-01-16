@@ -203,9 +203,8 @@ public class psi8_Intel0 extends Agent {
       return myBet;
     }
 
-    this.doWait((position % 3) + 1);
-    int div = position == 0 ? 4 : (position % 3) + 1;
-    myBet = (int) (System.currentTimeMillis() % div);
+    int div = position == 0 ? ThreadLocalRandom.current().nextInt(1, 5) : (position % 4) + 1;
+    myBet = (int) (System.nanoTime() % div);
 
     return myBet;
   }

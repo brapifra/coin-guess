@@ -31,19 +31,21 @@ public class psi8_State {
   }
 
   public psi8_Action getBestAction() {
+    psi8_Action best;
     if (Math.random() > epsilon) {
-      lastBest = getRandomAction();
-      return lastBest;
-    }
-    lastBest = actions.get(0);
-    for (int i = 0; i < actions.size(); i++) {
-      if (actions.get(i).getQuality() > lastBest.getQuality()) {
-        lastBest = actions.get(i);
+      best = getRandomAction();
+    } else {
+      best = actions.get(0);
+      for (int i = 0; i < actions.size(); i++) {
+        if (actions.get(i).getQuality() > best.getQuality()) {
+          best = actions.get(i);
+        }
+      }
+      if (best.getQuality() == 0) {
+        best = getRandomAction();
       }
     }
-    if (lastBest.getQuality() == 0) {
-      lastBest = getRandomAction();
-    }
+    lastBest = best;
     return lastBest;
   }
 
