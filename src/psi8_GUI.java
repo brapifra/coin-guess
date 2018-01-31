@@ -57,6 +57,10 @@ public class psi8_GUI extends Application {
         scene.getStylesheets().add(this.getClass().getResource("psi8_style.css").toExternalForm());
         primaryStage.setTitle("Psi 8!");
         primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
         primaryStage.show();
         ready = true;
     }
